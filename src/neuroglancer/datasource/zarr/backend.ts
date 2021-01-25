@@ -26,6 +26,7 @@ import {CancellationToken} from 'neuroglancer/util/cancellation';
 import {responseArrayBuffer} from 'neuroglancer/util/http_request';
 import {cancellableFetchSpecialOk, SpecialProtocolCredentials} from 'neuroglancer/util/special_protocol_request';
 import {registerSharedObject} from 'neuroglancer/worker_rpc';
+import { decodeJpeg } from 'src/neuroglancer/async_computation/decode_jpeg_request';
 
 async function decodeChunk(
     chunk: VolumeChunk, cancellationToken: CancellationToken, response: ArrayBuffer,
@@ -41,6 +42,11 @@ async function decodeChunk(
     case ZarrCompressor.BLOSC:
       buffer =
           await requestAsyncComputation(decodeBlosc, cancellationToken, [buffer.buffer], buffer);
+    case ZarrCompressor.JPEG: 
+      const chunkDataSize = chunk.chunkDataSize!;
+      buffer = await requestAsyncComputation(
+        decodeJpeg, cancellationToken, [response], new Uint8Array(response), chunkDataSize[0],
+        chunkDataSize[1] * chunkDataSize[2], chunkDataSize[3] || 1, false);
   }
   await decodeRawChunk(chunk, cancellationToken, buffer.buffer, encoding.endianness);
 }

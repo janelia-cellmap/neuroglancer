@@ -88,6 +88,8 @@ function parseZarrMetadata(obj: unknown): ZarrMetadata {
           return ZarrCompressor.GZIP;
         case 'zlib':
           return ZarrCompressor.GZIP;
+        case 'jpeg':
+          return ZarrCompressor.JPEG;
         default:
           throw new Error(`Unsupported compressor: ${JSON.stringify(id)}`);
       }

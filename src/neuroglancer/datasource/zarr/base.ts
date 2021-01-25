@@ -20,6 +20,7 @@ export enum ZarrCompressor {
   RAW,
   GZIP,
   BLOSC,
+  JPEG
 }
 
 export interface ZarrEncoding {
